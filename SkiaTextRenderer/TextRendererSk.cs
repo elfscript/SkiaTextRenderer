@@ -4,7 +4,7 @@ using SkiaSharp;
 
 namespace SkiaTextRenderer
 {
-    public static class TextRendererSk
+    public static partial class TextRendererSk
     {
         private static readonly string[] NewLineCharacters = new[] { Environment.NewLine, UnicodeCharacters.NewLine.ToString(), UnicodeCharacters.CarriageReturn.ToString() };
 
@@ -54,6 +54,7 @@ namespace SkiaTextRenderer
 
         private static bool EnableWrap { get => (Flags & (TextFormatFlags.NoClipping | TextFormatFlags.SingleLine)) == 0; }
         private static bool LineBreakWithoutSpaces { get => (Flags & TextFormatFlags.WordBreak) == 0; }
+        //--> LineBreakWithoutSpaces == !TextWrapByWord
 
         private static int NumberOfLines;
         private static float TextDesiredHeight;
@@ -81,7 +82,7 @@ namespace SkiaTextRenderer
             TextPaint.HintingLevel = SKPaintHinting.Normal;
             TextPaint.IsAutohinted = true; // Only for freetype
             TextPaint.IsEmbeddedBitmapText = true;
-            TextPaint.DeviceKerningEnabled = true;
+            //TextPaint.DeviceKerningEnabled = true;
 
             TextPaint.Typeface = font.Typeface;
             TextPaint.TextSize = font.Size;
@@ -206,6 +207,8 @@ namespace SkiaTextRenderer
                 {
                     int letterIndex = index + tmp;
                     character = Text[letterIndex];
+
+                    // ignore \r ?
                     if (character == UnicodeCharacters.CarriageReturn)
                     {
                         RecordPlaceholderInfo(letterIndex, character);
@@ -610,6 +613,8 @@ namespace SkiaTextRenderer
                     }
                 }
                 canvas.DrawPositionedText(Text, glyphPositions, TextPaint);
+                //SKCanvas.DrawPositionedText(string, SKPoint[], SKPaint)' is obsolete: 
+                //'Use DrawText(SKTextBlob, float, float, SKPaint) instead.'
             }
 
             if (drawSelection)
