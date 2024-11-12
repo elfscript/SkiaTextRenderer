@@ -2,14 +2,28 @@
 
 namespace SkiaTextRenderer
 {
-    public enum FontStyle
+/*    public enum FontStyle
     {
         Regular,
         Bold,
         Italic,
         Underline,
         Strikeout
+    }*/
+/// 2024.11.09, cp from ../../PDFontLib_skia/EnumDef.cs
+    [System.Flags]
+    public enum FontStyle
+    { 
+      Regular=0, 
+      Bold=1, 
+      Italic=2, 
+      Underline=4, 
+      Strikeout=8,  
+      Normal=Regular, 
+      Semi=16, 
+      Extra=32
     }
+//======================
 
     public class Font
     {
