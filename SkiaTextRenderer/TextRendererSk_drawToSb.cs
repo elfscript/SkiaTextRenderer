@@ -8,18 +8,13 @@ namespace SkiaTextRenderer
   public static partial class TextRendererSk
   {
     public static void DrawTextToSb(string text, Font font, SKRect bounds, 
-        SKColor foreColor, TextFormatFlags flags, TextPaintOptions options, 
-        StringBuilder sb, Action<string, float, float, StringBuilder> pdtextAction)
+        SKColor foreColor, TextFormatFlags flags, StringBuilder sb, Action<string, float, float, StringBuilder> pdtextAction)
     {
       Text = text;
       Flags = flags;
       PrepareTextPaint(font);
       MaxLineWidth = bounds.Width - LeftPadding - RightPadding;
       Bounds = bounds;
-      PaintOptions = options;
-
-      if (PaintOptions != null)
-        PaintOptions.EnsureSafeOptionValuesForText(Text);
 
       AlignText();
 
@@ -29,10 +24,9 @@ namespace SkiaTextRenderer
       drawTextToSb(pdtextAction, ref foreColor, sb);
     }
 
+
     private static void drawTextToSb(Action<string, float, float, StringBuilder> pdtextAction, ref SKColor foreColor, StringBuilder sb)
     {
-
-
       // Draw underline/strikethrough and texts
       TextPaint.Color = foreColor;
 
@@ -71,11 +65,10 @@ namespace SkiaTextRenderer
         else{
           if(sbtmp.Length > 0)  {
             float x= LettersInfo[token1stCharIndex].PositionX;
-            float y= lineIndex*LineHeight + FontCache.FontAscender;
-            //float y2= LettersInfo[token1stCharIndex].PositionY + FontCache.FontAscender;
-            //y == y2 ?
+            //float y= lineIndex*LineHeight + FontCache.FontAscender;
+            float y= LettersInfo[token1stCharIndex].PositionY + FontCache.FontAscender;
 
-            pdtextAction(sbtmp.ToString(), x, y, sb);
+            pdtextAction(sbtmp.ToString(), x, Bounds.Height-y, sb);
             sbtmp.Clear();
           }
 
@@ -91,13 +84,11 @@ namespace SkiaTextRenderer
       //the last Line      
       if(sbtmp.Length > 0)  {
         float x= LettersInfo[token1stCharIndex].PositionX;
-        float y= (NumberOfLines-1)*LineHeight + FontCache.FontAscender;
-        pdtextAction(sbtmp.ToString(), x,y, sb);
+        //float y= (NumberOfLines-1)*LineHeight + FontCache.FontAscender;
+        float y= LettersInfo[token1stCharIndex].PositionY + FontCache.FontAscender;
+        pdtextAction(sbtmp.ToString(), x, Bounds.Height-y, sb);
         sbtmp.Clear();
       }
-
-
-      //'Use DrawText(SKTextBlob, float, float, SKPaint) instead.'
     }
     //==============================
   }
